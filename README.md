@@ -16,3 +16,5 @@ to keep itself alive while attempting to reach the following goals (in order of 
 - stand at target position (planned)
 - aiTick function (inject for custom idle code, maybe wander aimlessly or follow owner)
 Also adds a bunch of new methods and parameters to the base mineflayer bot.
+
+Install: npm install nortbot
