@@ -73,7 +73,3 @@ export function plugin(bot) {
     })
 }
 
-
-const bot = mineflayer.createBot({username:"Goku", version:"1.21.8"})
-
-bot.loadPlugin(plugin)
