@@ -26,7 +26,7 @@ export function plugin(bot) {
     bot.ownerName = "Slaals" // default to me >:) you have to change it manually
     bot.enemyRange = 24
     bot.groundItemRange = 6
-    bot.time = 0
+    bot.time = 0 // number of physics ticks since initialization.
 
     // getters for nearest enemy, nearest ground item, and the owner entity.
     Object.defineProperty(bot, 'enemy', {
