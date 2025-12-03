@@ -48,36 +48,17 @@ export function plugin(bot) {
     bot.loadPlugin(autoEat)
     bot.loadPlugin(armorManager)
 
-    //getters
+    // getters
     {
         // getters for nearby entities
-        Object.defineProperty(bot, 'enemy', {
-            get: function() {
-                return bot.nearestEntity(entity => entity.type == "hostile" && bot.entity.position.distanceTo(entity.position) < bot.enemyRange);
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(bot, 'groundItem', {
-            get: function() {
-                return bot.nearestEntity(entity => entity.name == "item" && bot.entity.position.distanceTo(entity.position) < bot.groundItemRange);
-            },
-            enumerable: true,
-            configurable: true
-        });
+        bot.enemy = () => bot.nearestEntity(entity => entity.type == "hostile" && bot.entity.position.distanceTo(entity.position) < bot.enemyRange)
+        bot.groundItem = () => bot.nearestEntity(entity => entity.name == "item" && bot.entity.position.distanceTo(entity.position) < bot.groundItemRange)
 
-        //getters for inventory
-        Object.defineProperty(bot.inventory, 'sword', {
-            get: function() {
-                const swords = Object.values(bot.inventory.slots).filter(item => item != null && item.name.includes("sword"))
-                return bestTool(swords)
-            },
-            enumerable: true,
-            configurable: true
-        });
+        // getters for inventory
+        bot.inventory.sword = () => bestTool(Object.values(bot.inventory.slots).filter(item => item != null && item.name.includes("sword")))
     }
 
-    //setters
+    // setters
     {
         bot.setHuntTarget = (entity) => {bot.huntTarget = entity}
         bot.setFollowTarget = (entity) => {bot.followTarget = entity}
@@ -94,6 +75,8 @@ export function plugin(bot) {
 
             bot.on("physicsTick", () => {
                 if (bot.huntTarget && !bot.huntTarget.isValid) bot.huntTarget = undefined
+                if (bot.followTarget && !bot.followTarget.isValid) bot.followTarget = undefined
+
                 if (bot.time % bot.aiInterval == 0) ai()
                 bot.time++
             })
@@ -103,9 +86,10 @@ export function plugin(bot) {
     function ai() { // extremely simple ai logic
         bot.emit("ai")
         let entity;
-        if (entity = bot.enemy || bot.huntTarget) {
+        let item;
+        if (entity = bot.enemy() || bot.huntTarget) {
             bot.autoEat.disableAuto()
-            if (bot.inventory.sword) bot.equip(bot.inventory.sword)
+            if (item = bot.inventory.sword()) bot.equip(item)
             if (!entity) {
                 bot.pvp.attack(bot.huntTarget)
             } else {
@@ -114,8 +98,8 @@ export function plugin(bot) {
         } else {
             bot.pvp.stop()
             bot.autoEat.enableAuto()
-            if (entity = bot.groundItem) {
-                const item = entity.getDroppedItem()
+            if (entity = bot.groundItem()) {
+                item = entity.getDroppedItem()
                 bot.pathfinder.setGoal(new goals.GoalFollow(entity, 0))
             } else if (bot.followTarget) {
                 bot.pathfinder.setGoal(new goals.GoalFollow(bot.followTarget, 3))
