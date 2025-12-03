@@ -8,8 +8,9 @@ It is made to endure varying conditions, using:
 - MineflayerArmorManager (https://github.com/PrismarineJS/MineflayerArmorManager)
 to keep itself alive while attempting to reach the following goals (in order of priority):
 - attack target entity (planned)
-- collect whitelisted ground items, throw out trash if inventory full (planned)
+- throw out blacklisted items (planned)
 - place extra items in chests (planned)
+- collect whitelisted ground items
 - mine whitelisted valuable blocks (planned)
 - interact with target entity (planned)
 - break/interact with target block (planned)
